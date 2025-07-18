@@ -1,7 +1,7 @@
-from ultils.clima import obter_previsao
+from utils.clima import definir_hora
 
 if __name__ == '__main__':
 
     city_name = input("Digite sua cidade: ")
-    obter_previsao(city_name)
+    definir_hora(city_name)
     

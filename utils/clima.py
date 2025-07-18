@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime, timedelta
 
 #abe4201233b3a20dca48e1a3498d45d3
 
@@ -11,6 +12,51 @@ def acessar_api(api_key, city):
     response = requests.get(url_completa)
 
     return response.json()
+
+def definir_hora(city_name):
+    api_key = "abe4201233b3a20dca48e1a3498d45d3"
+    dados = acessar_api(api_key, city_name)
+
+    dt = dados['dt']
+    fuso_horario = dados['timezone']
+
+    data_hora = datetime.utcfromtimestamp(dt)
+    horario_local = data_hora + timedelta(seconds=fuso_horario)
+    hora = horario_local.hour
+    
+    periodo = []
+
+    if 0 <= hora < 12:
+        periodo = ['manha', 'tarde', 'noite' ]
+
+    elif 12 <= hora < 18: 
+        periodo = ['tarde', 'noite' ]
+
+    elif 18 <= hora < 23:
+        periodo = ['noite']
+
+    
+
+    print(periodo)
+    print(hora)
+    print(dados)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def obter_previsao(city_name):
 
