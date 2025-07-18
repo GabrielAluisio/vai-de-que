@@ -86,9 +86,9 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
 
     elif periodo_atual == 'noite':
         oi = 'Boa noite'
-        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. Recomendo {recomendar_roupa(temp_atual)}'
+        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {recomendar_roupa(temp_atual)}'
 
-    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. Recomendo {roupa_msg} {variacao_msg}'
+    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
 
 # Função principal
 
@@ -157,16 +157,16 @@ def definir_clima(city_name):
         
         if 0 <= hora < 6:
             # F F F 
-            print(f'{temp_6}, {temp_12}, {temp_18}')
+            print(mensagem_recomendada(temp_6, temp_12, 'manhã', 'tarde'))
         elif 6 <= hora < 12:
             # W F F
-            print(f'{temp_atual}, {temp_12}, {temp_18}')
+            print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
         elif 12 <= hora < 18:
             # W F
-            print(f'{temp_atual}, {temp_18}')
+            print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
         elif 18 <= hora <= 23:
             # W
-            print(f'{temp_atual}')
+            print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
         else:
             print('erro')
 
