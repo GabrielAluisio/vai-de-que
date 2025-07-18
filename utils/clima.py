@@ -49,7 +49,46 @@ def definir_temperatura(temperatura, sensacao):
         media = (temperatura + sensacao) / 2
         return round(media, 2)
 
-        
+def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proximo):
+    def recomendar_roupa(temp):
+
+        if temp >= 28:
+            return "Recomendo roupas leves, como camiseta e shorts. Está calor!"
+        elif 20 <= temp < 28:
+            return "Recomendo usar roupas confortáveis — o clima está agradável."
+        elif 15 <= temp < 20:
+            return "Recomendo uma blusa leve ou um casaco fino. Está um pouco frio!"
+        elif 10 <= temp < 15:
+            return "Recomendo usar um casaco ou jaqueta para se proteger. Está frio!"
+        else:
+            return "Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!"
+
+
+    def recomendar_variacao(temp_atual, temp_proximo_periodo):
+        diferenca = temp_proximo_periodo - temp_atual
+
+        if diferenca <= -5 and temp_proximo_periodo < 18:
+            return f"Porém, leve um casaco pois a {periodo_proximo} vai esfriar um pouco."
+
+        elif diferenca >= 5 and temp_proximo_periodo > 26:
+            return f"Porém, a {periodo_proximo} vai esquentar, então escolha roupas que possa tirar."
+
+        else:
+            return ''
+
+    roupa_msg = recomendar_roupa(temp_atual)
+    variacao_msg = recomendar_variacao(temp_atual, temp_proximo)
+    if periodo_atual == 'manhã':
+        oi = 'Bom dia'
+
+    elif periodo_atual == 'tarde':
+        oi = 'Boa tarde'
+
+    elif periodo_atual == 'noite':
+        oi = 'Boa noite'
+        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. Recomendo {recomendar_roupa(temp_atual)}'
+
+    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. Recomendo {roupa_msg} {variacao_msg}'
 
 # Função principal
 
@@ -130,6 +169,8 @@ def definir_clima(city_name):
             print(f'{temp_atual}')
         else:
             print('erro')
+
+
 
 
 
