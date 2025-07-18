@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 
+
 '''Recomendo ir com roupas leves, como camiseta e shorts. Está calor!
 
 Recomendo usar roupas confortáveis — o clima está agradável.
@@ -19,30 +20,64 @@ Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!'''
 
 #abe4201233b3a20dca48e1a3498d45d3
 
-def acessar_api(api_key, city):
+def api_forecast(api_key, city):
 
+    url_forecast = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
 
-    url = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
-    
-    response = requests.get(url)
+    response_forecast = requests.get(url_forecast)
 
-    return response.json()
+    return response_forecast.json()
 """
 {'06:00:00': {'dt': 1753164000, 'main': {'temp': 16.94, 'feels_like': 16.52, 'temp_min': 16.94, 'temp_max': 16.94, 'pressure': 1017, 'humidity': 70}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01n'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.19, 'deg': 32, 'gust': 1.08},}, 
 '12:00:00': {'dt': 1753185600, 'main': {'temp': 18.49, 'feels_like': 17.86, 'temp_min': 18.49, 'temp_max': 18.49, 'pressure': 1019, 'humidity': 56}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.15, 'deg': 29, 'gust': 1.42},}, 
 '18:00:00': {'dt': 1753207200, 'main': {'temp': 27.59, 'feels_like': 26.52, 'temp_min': 27.59, 'temp_max': 27.59, 'pressure': 1015, 'humidity': 22}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.87, 'deg': 198, 'gust': 3.26},}}"""
 
+def api_weather(api_key, city):
+
+    url_weather = f"https://api.openweathermap.org/data/2.5/weather?appid={api_key}&q={city}&units=metric"
+
+    response_weather = requests.get(url_weather)
+
+    return response_weather.json() 
 
 
-
-
-
-
-def definir_hora(city_name):
+def definir_temperatura(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
-    dados = acessar_api(api_key, city_name)
+    dadosF = api_forecast(api_key, city_name)
+    dadosW = api_weather(api_key, city_name)
 
-    dados_list = dados['list']
+    dt = dadosW['dt']
+    fuso_horario = dadosW['timezone']
+
+    data_hora = datetime.utcfromtimestamp(dt)
+    horario_local = data_hora + timedelta(seconds=fuso_horario)
+    hora = horario_local.hour
+    
+    periodo = []
+
+    if 0 <= hora < 12:
+        periodo = ['manha', 'tarde', 'noite' ]
+
+    elif 12 <= hora < 18: 
+        periodo = ['tarde', 'noite' ]
+
+    elif 18 <= hora <= 23:
+        periodo = ['noite']
+
+    
+
+    print(periodo)
+    print(hora)
+    print(dadosW)
+
+
+
+
+
+
+    #Previsões do tempo das 06, 12, 18
+
+    dados_list = dadosF['list']
 
     #Pegando os dados da api, filtrando somente para as horas desejadas e adicionando no dicionario previsoes filtradas
     horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
@@ -50,9 +85,9 @@ def definir_hora(city_name):
 
     for itens in dados_list:
         dt_txt = itens['dt_txt']
-        hora = dt_txt.split()[1]
-        if hora in horarios_desejados:
-            previsoes_filtradas[hora] = itens 
+        hora_list = dt_txt.split()[1]
+        if hora_list in horarios_desejados:
+            previsoes_filtradas[hora_list] = itens 
 
 
     if '06:00:00' in previsoes_filtradas and '12:00:00' in previsoes_filtradas and '18:00:00' in previsoes_filtradas:

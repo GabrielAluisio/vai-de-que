@@ -1,7 +1,7 @@
-from utils.clima import definir_hora
+from utils.clima import definir_temperatura
 
 if __name__ == '__main__':
 
     city_name = input("Digite sua cidade: ")
-    definir_hora(city_name)
+    definir_temperatura(city_name)
     
