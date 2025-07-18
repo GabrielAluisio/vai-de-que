@@ -27,7 +27,10 @@ def acessar_api(api_key, city):
     response = requests.get(url)
 
     return response.json()
-
+"""
+{'06:00:00': {'dt': 1753164000, 'main': {'temp': 16.94, 'feels_like': 16.52, 'temp_min': 16.94, 'temp_max': 16.94, 'pressure': 1017, 'humidity': 70}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01n'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.19, 'deg': 32, 'gust': 1.08},}, 
+'12:00:00': {'dt': 1753185600, 'main': {'temp': 18.49, 'feels_like': 17.86, 'temp_min': 18.49, 'temp_max': 18.49, 'pressure': 1019, 'humidity': 56}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.15, 'deg': 29, 'gust': 1.42},}, 
+'18:00:00': {'dt': 1753207200, 'main': {'temp': 27.59, 'feels_like': 26.52, 'temp_min': 27.59, 'temp_max': 27.59, 'pressure': 1015, 'humidity': 22}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.87, 'deg': 198, 'gust': 3.26},}}"""
 
 
 
@@ -41,6 +44,7 @@ def definir_hora(city_name):
 
     dados_list = dados['list']
 
+    #Pegando os dados da api, filtrando somente para as horas desejadas e adicionando no dicionario previsoes filtradas
     horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
     previsoes_filtradas = {}
 
@@ -50,7 +54,28 @@ def definir_hora(city_name):
         if hora in horarios_desejados:
             previsoes_filtradas[hora] = itens 
 
-    print(previsoes_filtradas)
+
+    if '06:00:00' in previsoes_filtradas and '12:00:00' in previsoes_filtradas and '18:00:00' in previsoes_filtradas:
+
+
+        dados_6 = previsoes_filtradas['06:00:00']
+        dados_12 = previsoes_filtradas['12:00:00']
+        dados_18 = previsoes_filtradas['18:00:00']
+
+        temperatura_6 = dados_6['main']['temp']
+        sensacao_6 = dados_6['main']['feels_like']
+
+        temperatura_12 = dados_12['main']['temp']
+        sensacao_12 = dados_12['main']['feels_like']
+
+        temperatura_18 = dados_18['main']['temp']
+        sensacao_18 = dados_18['main']['feels_like']
+
+        print(f"""6h: {temperatura_6} {sensacao_6}
+12h: {temperatura_12} {sensacao_12}
+18h: {temperatura_18} {sensacao_18}""")
+
+
 
 
 
