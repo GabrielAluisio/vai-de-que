@@ -38,9 +38,22 @@ def api_weather(api_key, city):
 
 
 
+def definir_temperatura(temperatura, sensacao):
+    dif = abs(temperatura - sensacao)
+    if dif > 7: 
+        if sensacao < temperatura:
+            return sensacao
+        else:
+            return temperatura
+    else:
+        media = (temperatura + sensacao) / 2
+        return round(media, 2)
+
+        
+
 # Função principal
 
-def definir_temperatura(city_name):
+def definir_clima(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
 
     # Requisições para as duas APIs
@@ -59,38 +72,14 @@ def definir_temperatura(city_name):
 
 
     # Dados climaticos 
-    temperatura = dadosW['main']['temp']
-    sensacao = dadosW['main']['feels_like']
+    temperatura_atual = dadosW['main']['temp']
+    sensacao_atual = dadosW['main']['feels_like']
     vento = dadosW['wind']['speed']
     umidade = dadosW['main']['humidity']
-    
-
-    
-    
-    periodo = []
-
-    if 0 <= hora < 12:
-        periodo = ['manha', 'tarde', 'noite' ]
-
-    elif 12 <= hora < 18: 
-        periodo = ['tarde', 'noite' ]
-
-    elif 18 <= hora <= 23:
-        periodo = ['noite']
-
-    
-
-    print(periodo)
-    print(hora)
-    print(dadosW)
-
-
-
-
 
 
     # Previsões para 06h, 12h e 18h
-    
+
     dados_list = dadosF['list']
     horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
     previsoes_filtradas = {}
@@ -117,12 +106,30 @@ def definir_temperatura(city_name):
 
         temperatura_18 = dados_18['main']['temp']
         sensacao_18 = dados_18['main']['feels_like']
+        
 
-        print(f"""6h: {temperatura_6} {sensacao_6}
-12h: {temperatura_12} {sensacao_12}
-18h: {temperatura_18} {sensacao_18}""")
+        # Condições de horário
+        
+        temp_6 = definir_temperatura(temperatura_6, sensacao_6)
+        temp_12 = definir_temperatura(temperatura_12, sensacao_12)
+        temp_18 = definir_temperatura(temperatura_18, sensacao_18)
+        temp_atual = definir_temperatura(temperatura_atual, sensacao_atual)
 
-
+        
+        if 0 <= hora < 6:
+            # F F F 
+            print(f'{temp_6}, {temp_12}, {temp_18}')
+        elif 6 <= hora < 12:
+            # W F F
+            print(f'{temp_atual}, {temp_12}, {temp_18}')
+        elif 12 <= hora < 18:
+            # W F
+            print(f'{temp_atual}, {temp_18}')
+        elif 18 <= hora <= 23:
+            # W
+            print(f'{temp_atual}')
+        else:
+            print('erro')
 
 
 
