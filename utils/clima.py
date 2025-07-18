@@ -1,45 +1,56 @@
 import requests
 from datetime import datetime, timedelta
 
+'''Recomendo ir com roupas leves, como camiseta e shorts. Está calor!
+
+Recomendo usar roupas confortáveis — o clima está agradável.
+
+Recomendo uma blusa leve ou um casaco fino. Está um pouco frio!
+
+Recomendo usar um casaco ou jaqueta para se proteger. Está frio!
+
+Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!'''
+
+
+
+
+
+
+
 #abe4201233b3a20dca48e1a3498d45d3
 
 def acessar_api(api_key, city):
 
 
-    url = "https://api.openweathermap.org/data/2.5/weather?"
-    url_completa = f"{url}appid={api_key}&q={city}&units=metric"
+    url = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
     
-    response = requests.get(url_completa)
+    response = requests.get(url)
 
     return response.json()
+
+
+
+
+
+
+
 
 def definir_hora(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
     dados = acessar_api(api_key, city_name)
 
-    dt = dados['dt']
-    fuso_horario = dados['timezone']
+    dados_list = dados['list']
 
-    data_hora = datetime.utcfromtimestamp(dt)
-    horario_local = data_hora + timedelta(seconds=fuso_horario)
-    hora = horario_local.hour
-    
-    periodo = []
+    horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
+    previsoes_filtradas = {}
 
-    if 0 <= hora < 12:
-        periodo = ['manha', 'tarde', 'noite' ]
+    for itens in dados_list:
+        dt_txt = itens['dt_txt']
+        hora = dt_txt.split()[1]
+        if hora in horarios_desejados:
+            previsoes_filtradas[hora] = itens 
 
-    elif 12 <= hora < 18: 
-        periodo = ['tarde', 'noite' ]
-
-    elif 18 <= hora < 23:
-        periodo = ['noite']
-
-    
-
-    print(periodo)
-    print(hora)
-    print(dados)
+    print(previsoes_filtradas)
 
 
 
@@ -76,18 +87,6 @@ def obter_previsao(city_name):
 
         def sugestao():
 
-            pontuacao_clima  = {
-                "Clear": 0,
-                "Clouds": 1,
-                "Haze": 1,
-                "Smoke": 1,
-                "Drizzle": 2,    
-                "Rain": 3,          
-                "Mist": 2,
-                "Fog": 3,
-                "Thunderstorm": 4
-            }
-
             def pontuar_vento(velocidade):
                 if velocidade <= 2:
                     return 0
@@ -116,37 +115,6 @@ def obter_previsao(city_name):
                     else:
                         return 3
             
-            def pontuar_temperatura(temperatura):
-                if temperatura >= 27:
-                    return 0
-                elif temperatura >= 22:
-                    return 1
-                elif temperatura >= 15:
-                    return 2
-                elif temperatura >= 10:
-                    return 3
-                elif temperatura >= 5:
-                    return 5
-                elif temperatura >= 0:
-                    return 7
-                else:
-                    return 9
-            
-            def pontuar_sensacao(sensacao, umidade):
-                if sensacao >= 27:
-                    return 0
-                elif sensacao >= 22:
-                    return 1
-                elif sensacao >= 15:
-                    return 2
-                elif sensacao >= 10:
-                    return 3
-                elif sensacao >= 5:
-                    return 5 if umidade <= 80 else 6
-                elif sensacao >= 0:
-                    return 7 if umidade <= 80 else 8
-                else:
-                    return 9
                 
 
             pontos = 0 
