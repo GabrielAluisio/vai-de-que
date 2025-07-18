@@ -18,12 +18,10 @@ Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!'''
 
 
 
-#abe4201233b3a20dca48e1a3498d45d3
+# Funções para acessar as duas apis
 
 def api_forecast(api_key, city):
-
     url_forecast = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
-
     response_forecast = requests.get(url_forecast)
 
     return response_forecast.json()
@@ -33,25 +31,41 @@ def api_forecast(api_key, city):
 '18:00:00': {'dt': 1753207200, 'main': {'temp': 27.59, 'feels_like': 26.52, 'temp_min': 27.59, 'temp_max': 27.59, 'pressure': 1015, 'humidity': 22}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.87, 'deg': 198, 'gust': 3.26},}}"""
 
 def api_weather(api_key, city):
-
     url_weather = f"https://api.openweathermap.org/data/2.5/weather?appid={api_key}&q={city}&units=metric"
-
     response_weather = requests.get(url_weather)
 
     return response_weather.json() 
 
 
+
+# Função principal
+
 def definir_temperatura(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
+
+    # Requisições para as duas APIs
     dadosF = api_forecast(api_key, city_name)
     dadosW = api_weather(api_key, city_name)
 
+
+
+     # Dados de hora e fuso horário
     dt = dadosW['dt']
     fuso_horario = dadosW['timezone']
-
     data_hora = datetime.utcfromtimestamp(dt)
     horario_local = data_hora + timedelta(seconds=fuso_horario)
     hora = horario_local.hour
+
+
+
+    # Dados climaticos 
+    temperatura = dadosW['main']['temp']
+    sensacao = dadosW['main']['feels_like']
+    vento = dadosW['wind']['speed']
+    umidade = dadosW['main']['humidity']
+    
+
+    
     
     periodo = []
 
@@ -75,11 +89,9 @@ def definir_temperatura(city_name):
 
 
 
-    #Previsões do tempo das 06, 12, 18
-
+    # Previsões para 06h, 12h e 18h
+    
     dados_list = dadosF['list']
-
-    #Pegando os dados da api, filtrando somente para as horas desejadas e adicionando no dicionario previsoes filtradas
     horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
     previsoes_filtradas = {}
 
@@ -116,99 +128,4 @@ def definir_temperatura(city_name):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-def obter_previsao(city_name):
-
-    api_key = "abe4201233b3a20dca48e1a3498d45d3"
-    dados = acessar_api(api_key, city_name)
-
-    if dados['cod'] == 401:
-        print('Problema durante a requisição\n'
-            f"Mensagem: {dados['message']}")
-        
-    elif dados['cod'] != 404:
-        clima = dados['weather'][0]['main']
-        temperatura = dados['main']['temp']
-        sensacao = dados['main']['feels_like']
-        vento = dados['wind']['speed']
-        umidade = dados['main']['humidity']
-
-        def sugestao():
-
-            def pontuar_vento(velocidade):
-                if velocidade <= 2:
-                    return 0
-                elif velocidade <= 5: 
-                    return 1
-                elif velocidade <= 10:
-                    return 2
-                else:
-                    return 3
-
-            def pontuar_umidade(valor, temperatura):
-                if temperatura >= 25:
-                    if valor <= 60:
-                        return 0
-                    elif valor <= 80:
-                        return 1
-                    else:
-                        return 2
-                else:
-                    if valor <= 30:
-                        return 0
-                    elif valor <= 60:
-                        return 1
-                    elif valor <= 80:
-                        return 2
-                    else:
-                        return 3
-            
-                
-
-            pontos = 0 
-            pontos += pontuacao_clima.get(clima, 2)
-            pontos += pontuar_vento(vento)
-            pontos += pontuar_umidade(umidade, temperatura)
-            pontos += pontuar_temperatura(temperatura) 
-            pontos += pontuar_sensacao(sensacao, umidade)
-            
-            print(pontos)
-            
-            print(pontuacao_clima.get(clima, 2),
-                pontuar_vento(vento), 
-                pontuar_umidade(umidade, temperatura), 
-                pontuar_temperatura(temperatura), 
-                pontuar_sensacao(sensacao, umidade))
-
-            def sugestao_roupa(pontos):
-                if pontos <= 4:
-                    return "Pode ir de roupa leve: camiseta e shorts"
-                elif pontos <= 8:
-                    return "Recomendo uma blusa fina"
-                elif pontos <= 13:
-                    return "Use casaco ou jaqueta"
-                elif pontos <= 17:
-                    return "Melhor ir de roupa bem quente, tipo casaco pesado e cachecol"
-                else: 
-                    return "Muito frio! Cachecol, luvas e gorro são recomendados"
-                
-            print(sugestao_roupa(pontos))
-
-
-        sugestao()
-        print(dados)
-    else:
-        print('Cidade não encontrada!')
     
