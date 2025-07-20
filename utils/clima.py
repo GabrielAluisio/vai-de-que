@@ -31,6 +31,16 @@ def definir_temperatura(temperatura, sensacao):
     else:
         media = (temperatura + sensacao) / 2
         return round(media, 2)
+    
+def msg_madrugada(temp_atual, temp_madrugada):
+    if temp_atual > (temp_madrugada + 5):
+        if 15 <= temp_madrugada < 20:
+            return "Durante a madrugada vai esfriar um pouco. Considere dormir com um cobertor quente."
+        elif 10 <= temp_madrugada < 15:
+            return "A madrugada será bem fria. Durma com dois cobertores ou um mais grosso."
+        else:
+            return "A madrugada terá frio intenso! Use casaco pesado, cachecol e se agasalhe bem até para dormir."
+    return ''
 
 def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proximo):
     def recomendar_roupa(temp):
@@ -101,10 +111,10 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
     if umidade >= 85:
         aviso_de_umidade = f"\n- A umidade está alta, o clima pode ficar mais abafado."
 
-    if umidade <= 30:
+    elif umidade <= 30:
         aviso_de_umidade = f"\n- A umidade está baixa, o ar está seco — beba bastante água e hidrate a pele."
 
-    if 30 < umidade < 40:
+    elif 30 < umidade < 40:
         aviso_de_umidade = f"\n- A umidade está um pouco baixa, atenção à hidratação."
 
     # Chuva
@@ -112,7 +122,7 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
         aviso_chuva = f"\n- Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
 
     if mensagem or aviso_chuva:
-        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}"
+        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}".strip()
     else:
         return ''
 
@@ -148,10 +158,10 @@ def definir_clima(city_name):
     umidade = dadosW['main']['humidity']
 
 
-    # Previsões para 06h, 12h e 18h
+    # Previsões para 03h,06h, 12h e 18h
 
     dados_list = dadosF['list']
-    horarios_desejados = ['06:00:00', '12:00:00', '18:00:00']
+    horarios_desejados = ['03:00:00', '06:00:00', '12:00:00', '18:00:00']
     previsoes_filtradas = {}
 
     for itens in dados_list:
@@ -160,14 +170,17 @@ def definir_clima(city_name):
         if hora_list in horarios_desejados:
             previsoes_filtradas[hora_list] = itens 
 
-    # Temperatura e sensação das 06h, 12h e 18h
+    # Temperatura e sensação das 03h, 06h, 12h e 18h
 
-    if '06:00:00' in previsoes_filtradas and '12:00:00' in previsoes_filtradas and '18:00:00' in previsoes_filtradas:
+    if '03:00:00' in previsoes_filtradas and '06:00:00' in previsoes_filtradas and '12:00:00' in previsoes_filtradas and '18:00:00' in previsoes_filtradas:
 
-
+        dados_3 = previsoes_filtradas['03:00:00']
         dados_6 = previsoes_filtradas['06:00:00']
         dados_12 = previsoes_filtradas['12:00:00']
         dados_18 = previsoes_filtradas['18:00:00']
+        
+        temperatura_3 = dados_3['main']['temp']
+        sensacao_3 = dados_3['main']['feels_like']
 
         temperatura_6 = dados_6['main']['temp']
         sensacao_6 = dados_6['main']['feels_like']
@@ -181,6 +194,7 @@ def definir_clima(city_name):
 
         # Condições de horário
         
+        temp_3 = definir_temperatura(temperatura_3, sensacao_3)
         temp_6 = definir_temperatura(temperatura_6, sensacao_6)
         temp_12 = definir_temperatura(temperatura_12, sensacao_12)
         temp_18 = definir_temperatura(temperatura_18, sensacao_18)
@@ -203,6 +217,7 @@ def definir_clima(city_name):
         elif 18 <= hora <= 23:
             # W F
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
+            print(msg_madrugada(temp_atual, temp_3))
             print(clima(dadosW, dados_6, 'manhã', vento, umidade))
         else:
             print('erro')
