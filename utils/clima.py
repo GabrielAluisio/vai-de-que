@@ -86,7 +86,7 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
 
     elif periodo_atual == 'noite':
         oi = 'Boa noite'
-        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} Mas, pela {periodo_proximo}, fará {temp_proximo:.1f} graus. {recomendar_roupa(temp_proximo)}'
+        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} Mas, ao amanhecer, fará {temp_proximo:.1f} graus. {recomendar_roupa(temp_proximo)}'
 
     return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
 
@@ -121,6 +121,12 @@ def clima(dados, dados_proximo_periodo, proximo_periodo):
 
 def definir_clima(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
+
+    # Tratamento de erro
+    if dadosW.get("cod") != 200:
+        print(f"Erro ao buscar clima para {city_name}: {dadosW.get('message', 'Erro desconhecido')}")
+        return
+    
 
     # Requisições para as duas APIs
     dadosF = api_forecast(api_key, city_name)
@@ -184,23 +190,28 @@ def definir_clima(city_name):
     
 
 
-        if 0 <= hora < 6:
+        if 0 <= hora < 3:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-        elif 6 <= hora < 12:
+            print(clima(dadosW, dadosF, 'manhã'))
+        elif 3 <= hora < 12:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
+            print(clima(dadosW, dadosF, 'tarde'))
         elif 12 <= hora < 18:
             # W F
             print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
+            print(clima(dadosW, dadosF, 'noite'))
         elif 18 <= hora <= 23:
             # W F
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
+            print(clima(dadosW, dadosF, 'manhã'))
         else:
             print('erro')
 
-        print(clima(dadosW))
 
+
+        
 
 
 
