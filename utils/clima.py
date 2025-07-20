@@ -1,23 +1,6 @@
 import requests
 from datetime import datetime, timedelta
 
-
-'''Recomendo ir com roupas leves, como camiseta e shorts. Está calor!
-
-Recomendo usar roupas confortáveis — o clima está agradável.
-
-Recomendo uma blusa leve ou um casaco fino. Está um pouco frio!
-
-Recomendo usar um casaco ou jaqueta para se proteger. Está frio!
-
-Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!'''
-
-
-
-
-
-
-
 # Funções para acessar as duas apis
 
 def api_forecast(api_key, city):
@@ -90,7 +73,7 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
 
     return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
 
-def clima(dados, dados_proximo_periodo, proximo_periodo):
+def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
     condicoes_climaticas = {
         "rain": "- Está chovendo agora. Leve um guarda-chuva!",
         "drizzle": "- Está chuviscando agora. Leve um guarda-chuva leve!",
@@ -107,12 +90,29 @@ def clima(dados, dados_proximo_periodo, proximo_periodo):
 
     mensagem = condicoes_climaticas.get(clima, '')
 
-    aviso_chuva = ''
+    
+
+    aviso_de_vento = aviso_de_umidade = aviso_chuva = ''
+
+    # Vento e umidade
+    if vento >= 5:
+        aviso_de_vento = f"\n- O vento está forte, pode parecer mais frio do que a temperatura indica."
+
+    if umidade >= 85:
+        aviso_de_umidade = f"\n- A umidade está alta, o clima pode ficar mais abafado."
+
+    if umidade <= 30:
+        aviso_de_umidade = f"\n- A umidade está baixa, o ar está seco — beba bastante água e hidrate a pele."
+
+    if 30 < umidade < 40:
+        aviso_de_umidade = f"\n- A umidade está um pouco baixa, atenção à hidratação."
+
+    # Chuva
     if clima in ['clear', 'clouds', 'mist', 'fog'] and clima_proximo in ['rain', 'drizzle', 'thunderstorm']:
         aviso_chuva = f"\n- Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
 
     if mensagem or aviso_chuva:
-        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}"
+        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}"
     else:
         return ''
 
@@ -121,18 +121,16 @@ def clima(dados, dados_proximo_periodo, proximo_periodo):
 
 def definir_clima(city_name):
     api_key = "abe4201233b3a20dca48e1a3498d45d3"
-
-    # Tratamento de erro
-    if dadosW.get("cod") != 200:
-        print(f"Erro ao buscar clima para {city_name}: {dadosW.get('message', 'Erro desconhecido')}")
-        return
     
 
     # Requisições para as duas APIs
     dadosF = api_forecast(api_key, city_name)
     dadosW = api_weather(api_key, city_name)
 
-
+    # Tratamento de erro
+    if dadosW.get("cod") != 200:
+        print(f"Erro ao buscar clima para {city_name}: {dadosW.get('message', 'Erro desconhecido')}")
+        return
 
      # Dados de hora e fuso horário
     dt = dadosW['dt']
@@ -193,29 +191,18 @@ def definir_clima(city_name):
         if 0 <= hora < 3:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-            print(clima(dadosW, dadosF, 'manhã'))
+            print(clima(dadosW, dados_6, 'manhã', vento, umidade))
         elif 3 <= hora < 12:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
-            print(clima(dadosW, dadosF, 'tarde'))
+            print(clima(dadosW, dados_12, 'tarde', vento, umidade))
         elif 12 <= hora < 18:
             # W F
             print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
-            print(clima(dadosW, dadosF, 'noite'))
+            print(clima(dadosW, dados_18, 'noite', vento, umidade))
         elif 18 <= hora <= 23:
             # W F
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-            print(clima(dadosW, dadosF, 'manhã'))
+            print(clima(dadosW, dados_6, 'manhã', vento, umidade))
         else:
             print('erro')
-
-
-
-        
-
-
-
-
-
-
-    
