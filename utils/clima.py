@@ -8,10 +8,6 @@ def api_forecast(api_key, city):
     response_forecast = requests.get(url_forecast)
 
     return response_forecast.json()
-"""
-{'06:00:00': {'dt': 1753164000, 'main': {'temp': 16.94, 'feels_like': 16.52, 'temp_min': 16.94, 'temp_max': 16.94, 'pressure': 1017, 'humidity': 70}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01n'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.19, 'deg': 32, 'gust': 1.08},}, 
-'12:00:00': {'dt': 1753185600, 'main': {'temp': 18.49, 'feels_like': 17.86, 'temp_min': 18.49, 'temp_max': 18.49, 'pressure': 1019, 'humidity': 56}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.15, 'deg': 29, 'gust': 1.42},}, 
-'18:00:00': {'dt': 1753207200, 'main': {'temp': 27.59, 'feels_like': 26.52, 'temp_min': 27.59, 'temp_max': 27.59, 'pressure': 1015, 'humidity': 22}, 'weather': [{'id': 800, 'main': 'Clear', 'description': 'clear sky', 'icon': '01d'}], 'clouds': {'all': 0}, 'wind': {'speed': 1.87, 'deg': 198, 'gust': 3.26},}}"""
 
 def api_weather(api_key, city):
     url_weather = f"https://api.openweathermap.org/data/2.5/weather?appid={api_key}&q={city}&units=metric"
@@ -83,13 +79,12 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
 
     return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
 
-def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
+def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade, hora):
     condicoes_climaticas = {
         "rain": "- Está chovendo agora. Leve um guarda-chuva!",
         "drizzle": "- Está chuviscando agora. Leve um guarda-chuva leve!",
         "thunderstorm": "- Há tempestades com raios agora. Evite se expor e leve capa de chuva!",
         "snow": "- Está nevando agora. Se agasalhe bem!",
-        "clear": "- O céu está limpo agora!",
         "clouds": "- Está nublado agora.",
         "mist": "- Há névoa no ar, atenção ao sair.",
         "fog": "- A visibilidade está baixa devido à neblina.",
@@ -99,10 +94,19 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
     clima_proximo = dados_proximo_periodo['weather'][0]['main'].lower()
 
     mensagem = condicoes_climaticas.get(clima, '')
+    aviso_de_vento = aviso_de_umidade = aviso_chuva = sol =''
 
-    
+    # Sol
+    if (clima == 'clear' and 6 < hora < 18) or clima == 'clouds':
+        cobertura = dados['clouds']['all']  # % de nuvens
+        if cobertura < 30:
+            sol = "\n- Está sol no momento."
+            temperatura_atual = dados['main']['temp']
+            if temperatura_atual >= 28:
+                sol += " E o sol está quente, use roupas leves e proteja-se do sol."
+            else:
+                sol += " Mas não está tão quente, aproveite o dia."
 
-    aviso_de_vento = aviso_de_umidade = aviso_chuva = ''
 
     # Vento e umidade
     if vento >= 5:
@@ -122,7 +126,7 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade):
         aviso_chuva = f"\n- Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
 
     if mensagem or aviso_chuva:
-        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}".strip()
+        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}{sol}".strip()
     else:
         return ''
 
@@ -205,19 +209,19 @@ def definir_clima(city_name):
         if 0 <= hora < 3:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-            print(clima(dadosW, dados_6, 'manhã', vento, umidade))
+            print(clima(dadosW, dados_6, 'manhã', vento, umidade, hora))
         elif 3 <= hora < 12:
             # W F 
             print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
-            print(clima(dadosW, dados_12, 'tarde', vento, umidade))
+            print(clima(dadosW, dados_12, 'tarde', vento, umidade, hora))
         elif 12 <= hora < 18:
             # W F
             print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
-            print(clima(dadosW, dados_18, 'noite', vento, umidade))
+            print(clima(dadosW, dados_18, 'noite', vento, umidade, hora))
         elif 18 <= hora <= 23:
             # W F
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
             print(msg_madrugada(temp_atual, temp_3))
-            print(clima(dadosW, dados_6, 'manhã', vento, umidade))
+            print(clima(dadosW, dados_6, 'manhã', vento, umidade, hora))
         else:
             print('erro')
