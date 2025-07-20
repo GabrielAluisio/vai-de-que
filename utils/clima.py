@@ -68,7 +68,7 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
         diferenca = temp_proximo_periodo - temp_atual
 
         if diferenca <= -5 and temp_proximo_periodo < 18:
-            return f"Porém, leve um casaco pois a {periodo_proximo} vai esfriar um pouco."
+            return f"Porém, leve um casaco pois a {periodo_proximo} vai esfriar."
 
         elif diferenca >= 5 and temp_proximo_periodo > 26:
             return f"Porém, a {periodo_proximo} vai esquentar, então escolha roupas que possa tirar."
@@ -86,7 +86,7 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
 
     elif periodo_atual == 'noite':
         oi = 'Boa noite'
-        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {recomendar_roupa(temp_atual)}'
+        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} Mas, pela {periodo_proximo}, fará {temp_proximo:.1f} graus. {recomendar_roupa(temp_proximo)}'
 
     return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
 
@@ -129,6 +129,7 @@ def definir_clima(city_name):
         if hora_list in horarios_desejados:
             previsoes_filtradas[hora_list] = itens 
 
+    # Temperatura e sensação das 06h, 12h e 18h
 
     if '06:00:00' in previsoes_filtradas and '12:00:00' in previsoes_filtradas and '18:00:00' in previsoes_filtradas:
 
@@ -154,21 +155,44 @@ def definir_clima(city_name):
         temp_18 = definir_temperatura(temperatura_18, sensacao_18)
         temp_atual = definir_temperatura(temperatura_atual, sensacao_atual)
 
-        
+        # Condições de chuva
+    
+        condicoes_climaticas = {
+            "rain": "Está chovendo agora. Leve um guarda-chuva!",
+            "drizzle": "Está chuviscando agora. Leve um guarda-chuva leve!",
+            "thunderstorm": "Há tempestades com raios agora. Evite se expor e leve capa de chuva!",
+            "snow": "Está nevando agora. Se agasalhe bem!",
+            "clear": "O céu está limpo agora!",
+            "clouds": "Está nublado agora.",
+            "mist": "Há névoa no ar, atenção ao sair.",
+            "fog": "A visibilidade está baixa devido à neblina.",
+        }
+
+        clima = dadosW['weather'][0]['main'].lower()
+
+        mensagem = condicoes_climaticas.get(clima, '')
+
+
+
+
         if 0 <= hora < 6:
-            # F F F 
-            print(mensagem_recomendada(temp_6, temp_12, 'manhã', 'tarde'))
+            # W F 
+            print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
         elif 6 <= hora < 12:
-            # W F F
+            # W F 
             print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
         elif 12 <= hora < 18:
             # W F
             print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
         elif 18 <= hora <= 23:
-            # W
+            # W F
             print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
+            print(dadosW)
         else:
             print('erro')
+
+        print('Informações adicionais sobre o clima:\n',mensagem)
+        print('Clima bruto:',clima)
 
 
 
