@@ -1,7 +1,6 @@
-from utils.clima import definir_clima
+from whatsapp.bot import iniciar_bot
 
 if __name__ == '__main__':
 
-    city_name = input("Digite sua cidade: ")
-    definir_clima(city_name)
+    iniciar_bot()
     

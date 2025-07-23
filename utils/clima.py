@@ -208,20 +208,30 @@ def definir_clima(city_name):
 
         if 0 <= hora < 3:
             # W F 
-            print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-            print(clima(dadosW, dados_6, 'manhã', vento, umidade, hora))
+            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã')
+            msg2 = clima(dadosW, dados_6, 'manhã', vento, umidade, hora)
+
+            resposta_final = f'{msg1}\n{msg2}'
         elif 3 <= hora < 12:
             # W F 
-            print(mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde'))
-            print(clima(dadosW, dados_12, 'tarde', vento, umidade, hora))
+            msg1 = mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde')
+            msg2 = clima(dadosW, dados_12, 'tarde', vento, umidade, hora)
+
+            resposta_final = f'{msg1}\n{msg2}'
         elif 12 <= hora < 18:
             # W F
-            print(mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite'))
-            print(clima(dadosW, dados_18, 'noite', vento, umidade, hora))
+            msg1 = mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite')
+            msg2 = clima(dadosW, dados_18, 'noite', vento, umidade, hora)
+
+            resposta_final = f'{msg1}\n{msg2}'
         elif 18 <= hora <= 23:
             # W F
-            print(mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã'))
-            print(msg_madrugada(temp_atual, temp_3))
-            print(clima(dadosW, dados_6, 'manhã', vento, umidade, hora))
+            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã')
+            msg2 = msg_madrugada(temp_atual, temp_3)
+            msg3 = clima(dadosW, dados_6, 'manhã', vento, umidade, hora)
+
+            resposta_final = f'{msg1}\n{msg2}\n{msg3}'
         else:
-            print('erro')
+            return 'erro'
+
+    return resposta_final.strip()
