@@ -40,93 +40,81 @@ def msg_madrugada(temp_atual, temp_madrugada):
 
 def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proximo):
     def recomendar_roupa(temp):
-
         if temp >= 28:
-            return "Recomendo roupas leves, como camiseta e shorts. Está calor!"
+            return "🌞 Recomendo roupas leves, como camiseta e shorts. Está calor!"
         elif 20 <= temp < 28:
-            return "Recomendo usar roupas confortáveis — o clima está agradável."
+            return "😊 Recomendo usar roupas confortáveis — o clima está agradável."
         elif 15 <= temp < 20:
-            return "Recomendo uma blusa leve ou um casaco fino. Está um pouco frio!"
+            return "🧥 Recomendo uma blusa leve ou um casaco fino. Está um pouco frio!"
         elif 10 <= temp < 15:
-            return "Recomendo usar um casaco ou jaqueta para se proteger. Está frio!"
+            return "🧣 Recomendo usar um casaco ou jaqueta para se proteger. Está frio!"
         else:
-            return "Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!"
-
+            return "❄️ Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!"
 
     def recomendar_variacao(temp_atual, temp_proximo_periodo):
         diferenca = temp_proximo_periodo - temp_atual
-
         if diferenca <= -5 and temp_proximo_periodo < 18:
-            return f"Porém, leve um casaco pois a {periodo_proximo} vai esfriar."
-
+            return f"🧥 Porém, leve um casaco pois a {periodo_proximo} vai esfriar."
         elif diferenca >= 5 and temp_proximo_periodo > 26:
-            return f"Porém, a {periodo_proximo} vai esquentar, então escolha roupas que possa tirar."
-
+            return f"🌡️ Porém, a {periodo_proximo} vai esquentar, então escolha roupas que possa tirar."
         else:
             return ''
 
     roupa_msg = recomendar_roupa(temp_atual)
     variacao_msg = recomendar_variacao(temp_atual, temp_proximo)
     if periodo_atual == 'manhã':
-        oi = 'Bom dia'
-
+        oi = '☀️ Bom dia'
     elif periodo_atual == 'tarde':
-        oi = 'Boa tarde'
-
+        oi = '🌤️ Boa tarde'
     elif periodo_atual == 'noite':
-        oi = 'Boa noite'
-        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} Mas, ao amanhecer, fará {temp_proximo:.1f} graus. {recomendar_roupa(temp_proximo)}'
-
-    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f} graus. {roupa_msg} {variacao_msg}'
+        oi = '🌙 Boa noite'
+        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f}°C. \n\n{roupa_msg} Mas, ao amanhecer, fará {temp_proximo:.1f}°C. {recomendar_roupa(temp_proximo)}'
+    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f}°C. \n\n{roupa_msg} {variacao_msg}'
 
 def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade, hora):
     condicoes_climaticas = {
-        "rain": "- Está chovendo agora. Leve um guarda-chuva!",
-        "drizzle": "- Está chuviscando agora. Leve um guarda-chuva leve!",
-        "thunderstorm": "- Há tempestades com raios agora. Evite se expor e leve capa de chuva!",
-        "snow": "- Está nevando agora. Se agasalhe bem!",
-        "clouds": "- Está nublado agora.",
-        "mist": "- Há névoa no ar, atenção ao sair.",
-        "fog": "- A visibilidade está baixa devido à neblina.",
+        "rain": " - ☔ Está chovendo agora. Leve um guarda-chuva! ☔",
+        "drizzle": " - 🌦️ Está chuviscando agora. Leve um guarda-chuva leve! 🌦️",
+        "thunderstorm": " - ⛈️ Há tempestades com raios agora. Evite se expor e leve capa de chuva! ⛈️",
+        "snow": " - ❄️ Está nevando agora. Se agasalhe bem! ❄️",
+        "clouds": " - ☁️ Está nublado agora.",
+        "mist": " - 🌫️ Há névoa no ar, atenção ao sair.",
+        "fog": " - 🌁 A visibilidade está baixa devido à neblina.",
     }
 
     clima = dados['weather'][0]['main'].lower()
     clima_proximo = dados_proximo_periodo['weather'][0]['main'].lower()
 
     mensagem = condicoes_climaticas.get(clima, '')
-    aviso_de_vento = aviso_de_umidade = aviso_chuva = sol =''
+    aviso_de_vento = aviso_de_umidade = aviso_chuva = sol = ''
 
-    # Sol
     if (clima == 'clear' and 6 < hora < 18) or clima == 'clouds':
         cobertura = dados['clouds']['all']  # % de nuvens
         if cobertura < 30:
-            sol = "\n- Está sol no momento."
+            sol = "\n - ☀️ Está sol no momento."
             temperatura_atual = dados['main']['temp']
             if temperatura_atual >= 28:
                 sol += " E o sol está quente, use roupas leves e proteja-se do sol."
             else:
                 sol += " Mas não está tão quente, aproveite o dia."
 
-
-    # Vento e umidade
     if vento >= 5:
-        aviso_de_vento = f"\n- O vento está forte, pode parecer mais frio do que a temperatura indica."
+        aviso_de_vento = "\n - 🌬️ O vento está forte, pode parecer mais frio do que a temperatura indica."
 
     if umidade >= 85:
-        aviso_de_umidade = f"\n- A umidade está alta, o clima pode ficar mais abafado."
-
+        aviso_de_umidade = "\n - 💧 A umidade está alta, o clima pode ficar mais abafado."
     elif umidade <= 30:
-        aviso_de_umidade = f"\n- A umidade está baixa, o ar está seco — beba bastante água e hidrate a pele."
-
+        aviso_de_umidade = "\n - 💨 A umidade está baixa, o ar está seco — beba bastante água e hidrate a pele."
     elif 30 < umidade < 40:
-        aviso_de_umidade = f"\n- A umidade está um pouco baixa, atenção à hidratação."
+        aviso_de_umidade = "\n - ⚠️ A umidade está um pouco baixa, atenção à hidratação."
 
-    # Chuva
     if clima in ['clear', 'clouds', 'mist', 'fog'] and clima_proximo in ['rain', 'drizzle', 'thunderstorm']:
-        aviso_chuva = f"\n- Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
+        aviso_chuva = f"\n - ☂️ Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
 
     if mensagem or aviso_chuva:
-        return f"Informações adicionais sobre o clima:\n{mensagem}{aviso_chuva}{aviso_de_vento}{aviso_de_umidade}{sol}".strip()
+        partes = [mensagem, aviso_chuva, aviso_de_vento, aviso_de_umidade, sol]
+        texto_adicional = '\n'.join([p.strip() for p in partes if p.strip()])
+        return f"\n📝 Informações adicionais sobre o clima:\n{texto_adicional}"
     else:
         return ''
 
@@ -234,4 +222,4 @@ def definir_clima(city_name):
         else:
             return 'erro'
 
-    return resposta_final.strip()
+    return resposta_final
