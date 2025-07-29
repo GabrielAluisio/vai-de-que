@@ -28,7 +28,7 @@ from utils.clima import definir_clima  # sua função que gera texto clima
 cidade_atual = 'sao paulo'  # padrão inicial
 
 def enviar_mensagem_whatsapp(texto):
-    url = "http://127.0.0.1:8080/message/sendText/vou-de-que"  # sua URL API WhatsApp
+    url = "http://127.0.0.1:8080/message/sendText/vai-de-que"  # sua URL API WhatsApp
     headers = {
         "Content-Type": "application/json",
         "apikey": "16645164840"  # sua chave da API
