@@ -1,7 +1,8 @@
+version: '3'
 services:
   evolution-api:
     container_name: evolution_api
-    image: atendai/evolution-api:v2.1.1
+    image: atendai/evolution-api:v1.8.2
     restart: always
     ports:
       - "8080:8080"
@@ -9,42 +10,6 @@ services:
       - .env
     volumes:
       - evolution_instances:/evolution/instances
-    depends_on:
-      - mysql
-      - redis
 
-  mysql:
-    container_name: mysql
-    image: percona/percona-server:8.0
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=evolution
-      - TZ=America/Bahia
-    volumes:
-      - mysql_data:/var/lib/mysql
-    expose:
-      - 3306
-
-  redis:
-    image: redis:latest
-    container_name: redis
-    command: >
-      redis-server --port 6379 --appendonly yes
-    volumes:
-      - evolution_redis:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - evolution-net
-      
 volumes:
   evolution_instances:
-  mysql_data:
-  evolution_redis:
-
-networks:
-  evolution-net:
-    driver: bridge
