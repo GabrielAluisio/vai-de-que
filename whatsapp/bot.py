@@ -24,8 +24,12 @@ def processar_mensagem(texto, remote_jid, from_me):
             resposta = definir_clima(cidade_atual)
             enviar_mensagem_whatsapp(remote_jid, resposta)
         
-        elif texto == 'comandos' or texto == 'comando'
-            enviar_mensagem_whatsapp(remote_jid, "Por favor, digite 'mudar cidade para ...' ou 'vou de que?'.")
+        elif texto == 'comandos' or texto == 'comando' or texto == 'oi, bot' or texto == 'oi bot':
+            enviar_mensagem_whatsapp(remote_jid,
+    "Oi! 👋 Eu sou seu assistente de clima.\n"
+    "Você pode me pedir a previsão do tempo dizendo 'vou de que?'.\n"
+    "Também posso mudar a cidade para você, basta digitar: 'mudar cidade para [nome da cidade]'."
+)
 
 
 

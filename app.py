@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
 from whatsapp.bot import processar_mensagem  # função que processa e envia mensagem
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = Flask(__name__)
 
 @app.route('/webhook/messages-upsert', methods=['POST'])

@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime, timedelta
+import os
 
 # Funções para acessar as duas apis
 
@@ -122,7 +123,7 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade, hora):
 # Função principal
 
 def definir_clima(city_name):
-    api_key = "abe4201233b3a20dca48e1a3498d45d3"
+    api_key = os.getenv("OPENWEATHER_API_KEY") 
     
 
     # Requisições para as duas APIs
