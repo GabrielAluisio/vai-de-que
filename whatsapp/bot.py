@@ -34,7 +34,7 @@ def processar_mensagem(texto, remote_jid, from_me):
 
 
 def enviar_mensagem_whatsapp(numero, texto):
-    url = "http://127.0.0.1:8080/message/sendText/vou-de-que"  # URL API WhatsApp
+    url = "https://vou-de-que.onrender.com/message/sendText/vou-de-que"  # URL API WhatsApp
     headers = {
         "Content-Type": "application/json",
         "apikey": "16645164840"  # chave da API
