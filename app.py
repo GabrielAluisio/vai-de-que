@@ -6,12 +6,16 @@ app = Flask(__name__)
 @app.route('/webhook/messages-upsert', methods=['POST'])
 def messages_upsert():
     data = request.get_json()
+    mensagem = data.get('data')
+    key = mensagem.get('key')
+    remote_jid = key.get('remoteJid')
+    from_me = key.get('fromMe')
+    texto = mensagem.get('message', {}).get('conversation', '').strip().lower()
+
+    
+    processar_mensagem(texto, remote_jid, from_me)
+
     print("Recebido no webhook messages-upsert:", data)
-    
-    texto_recebido = data.get('data', {}).get('message', {}).get('conversation', '').strip().lower()
-    
-    if texto_recebido:
-        processar_mensagem(texto_recebido)  # processa qualquer mensagem recebida
     
     return jsonify({"status": "ok"}), 200
 
