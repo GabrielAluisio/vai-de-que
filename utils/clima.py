@@ -127,7 +127,7 @@ def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade, hora):
         aviso_de_umidade = "\n - ⚠️ A umidade está um pouco baixa, atenção à hidratação."
 
     if clima in ['clear', 'clouds', 'mist', 'fog'] and clima_proximo in ['rain', 'drizzle', 'thunderstorm']:
-        aviso_chuva = f"\n - ☂️ Leve um guarda-chuva! Há previsão de chuva no(a) {proximo_periodo}."
+        aviso_chuva = f"\n - ☂️ Leve um guarda-chuva! Há previsão de chuva pela {proximo_periodo}."
 
     if mensagem or aviso_chuva:
         partes = [mensagem, aviso_chuva, aviso_de_vento, aviso_de_umidade, sol]
