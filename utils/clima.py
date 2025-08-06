@@ -39,7 +39,7 @@ def msg_madrugada(temp_atual, temp_madrugada):
             return "A madrugada terá frio intenso! Use casaco pesado, cachecol e se agasalhe bem até para dormir."
     return ''
 
-def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proximo):
+def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proximo, cidade):
     def recomendar_roupa(temp):
         if temp >= 28:
             return "🌞 Recomendo roupas leves, como camiseta e shorts. Está calor!"
@@ -51,6 +51,18 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
             return "🧣 Recomendo usar um casaco ou jaqueta para se proteger. Está frio!"
         else:
             return "❄️ Recomendo um casaco pesado, cachecol e luvas — o frio está intenso!"
+        
+    def recomendar_roupa_futuro(temp):
+        if temp >= 28:
+            return "🌞 Recomendo roupas leves, como camiseta e shorts. Estará calor!"
+        elif 20 <= temp < 28:
+            return "😊 Recomendo usar roupas confortáveis — o clima estará agradável."
+        elif 15 <= temp < 20:
+            return "🧥 Recomendo uma blusa leve ou um casaco fino. Estará um pouco frio!"
+        elif 10 <= temp < 15:
+            return "🧣 Recomendo usar um casaco ou jaqueta para se proteger. Estará frio!"
+        else:
+            return "❄️ Recomendo um casaco pesado, cachecol e luvas — o frio estará intenso!"
 
     def recomendar_variacao(temp_atual, temp_proximo_periodo):
         diferenca = temp_proximo_periodo - temp_atual
@@ -62,6 +74,7 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
             return ''
 
     roupa_msg = recomendar_roupa(temp_atual)
+    roupa_msg_futuro = recomendar_roupa_futuro(temp_proximo)
     variacao_msg = recomendar_variacao(temp_atual, temp_proximo)
     if periodo_atual == 'manhã':
         oi = '☀️ Bom dia'
@@ -69,8 +82,12 @@ def mensagem_recomendada(temp_atual, temp_proximo, periodo_atual, periodo_proxim
         oi = '🌤️ Boa tarde'
     elif periodo_atual == 'noite':
         oi = '🌙 Boa noite'
-        return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f}°C. \n\n{roupa_msg} Mas, ao amanhecer, fará {temp_proximo:.1f}°C. {recomendar_roupa(temp_proximo)}'
-    return f'{oi}, pela {periodo_atual} a temperatura está em torno de {temp_atual:.1f}°C. \n\n{roupa_msg} {variacao_msg}'
+        return (
+                f'{oi}! Agora de {periodo_atual} a temperatura em {cidade} está em torno de {temp_atual:.1f}°C.\n\n'
+                f'{roupa_msg}\n'
+                f'Mas, ao amanhecer, fará {temp_proximo:.1f}°C. {roupa_msg_futuro}'
+            )
+    return f'{oi}! Agora de {periodo_atual} a temperatura em {cidade} está em torno de {temp_atual:.1f}°C.\n\n{roupa_msg}\n{variacao_msg}'
 
 def clima(dados, dados_proximo_periodo, proximo_periodo, vento, umidade, hora):
     condicoes_climaticas = {
@@ -197,25 +214,25 @@ def definir_clima(city_name):
 
         if 0 <= hora < 3:
             # W F 
-            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã')
+            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã', city_name)
             msg2 = clima(dadosW, dados_6, 'manhã', vento, umidade, hora)
 
             resposta_final = f'{msg1}\n{msg2}'
         elif 3 <= hora < 12:
             # W F 
-            msg1 = mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde')
+            msg1 = mensagem_recomendada(temp_atual, temp_12, 'manhã', 'tarde', city_name)
             msg2 = clima(dadosW, dados_12, 'tarde', vento, umidade, hora)
 
             resposta_final = f'{msg1}\n{msg2}'
         elif 12 <= hora < 18:
             # W F
-            msg1 = mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite')
+            msg1 = mensagem_recomendada(temp_atual, temp_18, 'tarde', 'noite', city_name)
             msg2 = clima(dadosW, dados_18, 'noite', vento, umidade, hora)
 
             resposta_final = f'{msg1}\n{msg2}'
         elif 18 <= hora <= 23:
             # W F
-            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã')
+            msg1 = mensagem_recomendada(temp_atual, temp_6, 'noite', 'manhã', city_name)
             msg2 = msg_madrugada(temp_atual, temp_3)
             msg3 = clima(dadosW, dados_6, 'manhã', vento, umidade, hora)
 
