@@ -14,9 +14,9 @@ def processar_mensagem(texto, remote_jid, from_me):
         if nova_cidade:
             cidade_atual = nova_cidade
             enviar_mensagem_whatsapp(remote_jid, f"Cidade alterada para {cidade_atual.title()}!")
-        else:
-            enviar_mensagem_whatsapp(remote_jid, "Você precisa informar o nome da cidade após 'mudar cidade para'.")
-    
+            resposta = definir_clima(cidade_atual)
+            enviar_mensagem_whatsapp(remote_jid, resposta)
+
     elif texto == 'vou de que' or texto == 'vou de que?':
         resposta = definir_clima(cidade_atual)
         enviar_mensagem_whatsapp(remote_jid, resposta)
